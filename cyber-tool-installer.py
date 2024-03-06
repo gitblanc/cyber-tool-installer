@@ -89,11 +89,6 @@ TOOLS = {
     # Add more tools here
 }
 
-def get_pc_user():
-    """Prompt the user for the PC user's name."""
-    pc_user = input(f"{RED}Enter the PC user's name for the installation: {RESET}")
-    return pc_user
-
 def get_os():
     """Determine the operating system."""
     return platform.system().lower()
@@ -104,17 +99,14 @@ def print_color(text, color):
 
 def install_tool(tool_name):
     """Read the tool's installation command from its file, replace the PC user placeholder, and execute it. Returns False if installation failed."""
-    pc_user = get_pc_user()  # Prompt for the PC user's name
     tool_info = TOOLS.get(tool_name, {})
     command_file_path = f"./tools/{tool_info.get('file', '')}"
     try:
         with open(command_file_path, "r") as file:
             install_command = file.read().strip()
-        # Replace the PC user placeholder with the actual PC user's name
-        install_command = install_command.replace("{pc_user}", pc_user)
-        print_color(f"Installing {tool_name} for user {pc_user} without requiring user intervention...", RED)
+        print_color(f"Installing {tool_name} without requiring user intervention...", RED)
         subprocess.run(install_command, shell=True, check=True)
-        print_color(f"{tool_name} installed successfully for user {pc_user}.", RED)
+        print_color(f"{tool_name} installed successfully :)", RED)
         return True
     except Exception as e:
         print_color(f"Error installing {tool_name}: {e}", RED)
@@ -167,10 +159,10 @@ def print_logo():
     print_color(logo, RED)
 
 def main_menu():
-    # Check if the script is run with root privileges
-    # if os.geteuid() != 0:
-    #     print_color("This script needs to be run as root. Please run again with sudo.", RED)
-    #     sys.exit(1)
+    #Check if the script is run with root privileges
+    if os.geteuid() != 0:
+        print_color("This script needs to be run as root. Please run again with sudo.", RED)
+        sys.exit(1)
     print_logo()
     
     failed_installs = []
